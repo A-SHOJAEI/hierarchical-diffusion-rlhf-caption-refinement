@@ -1,0 +1,91 @@
+# Default configuration for Hierarchical Diffusion RLHF Caption Refinement
+
+# Random seed for reproducibility
+seed: 42
+
+# Device configuration
+device: auto
+
+# Model architecture
+model:
+  vocab_size: 50257
+  hidden_dim: 768
+  num_layers: 12
+  num_heads: 12
+  max_length: 128
+  num_timesteps: 1000
+  dropout: 0.1
+  image_embedding_dim: 768
+  reward_num_layers: 6
+
+# Data configuration
+data:
+  dataset_name: conceptual_captions
+  tokenizer_name: gpt2
+  max_length: 128
+  train_max_samples: 5000
+  val_max_samples: 500
+  test_max_samples: 500
+  cache_dir: null
+
+# Training configuration
+training:
+  # Base model pre-training
+  base_pretrain_epochs: 10
+  base_learning_rate: 0.0001
+  base_batch_size: 16
+
+  # Reward model training
+  reward_epochs: 5
+  reward_learning_rate: 0.0001
+  reward_batch_size: 16
+
+  # RLHF fine-tuning
+  rlhf_epochs: 8
+  rlhf_learning_rate: 0.00001
+  rlhf_batch_size: 8
+
+  # Optimization
+  weight_decay: 0.01
+  gradient_clip_norm: 1.0
+  warmup_steps: 100
+
+  # Early stopping
+  patience: 5
+
+  # Mixed precision training
+  use_amp: true
+
+  # Hierarchical reward shaping
+  clip_weight: 0.7
+  preference_weight: 0.3
+  confidence_temperature: 0.1
+
+# Evaluation configuration
+evaluation:
+  batch_size: 16
+  max_generation_length: 50
+  compute_all_metrics: true
+  num_samples: 100
+
+# Paths
+paths:
+  save_dir: models
+  checkpoint_dir: checkpoints
+  results_dir: results
+  log_dir: logs
+
+# Logging
+logging:
+  level: INFO
+  log_to_file: true
+  log_file: logs/training.log
+  mlflow_tracking: false
+  mlflow_experiment_name: hierarchical_rlhf_caption
+
+# Target metrics
+target_metrics:
+  clip_score: 0.32
+  cider: 1.2
+  human_preference_win_rate: 0.68
+  specificity_score: 0.75

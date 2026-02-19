@@ -1,0 +1,92 @@
+# Ablation study configuration - Baseline without hierarchical reward shaping
+
+# Random seed for reproducibility
+seed: 42
+
+# Device configuration
+device: auto
+
+# Model architecture (same as default)
+model:
+  vocab_size: 50257
+  hidden_dim: 768
+  num_layers: 12
+  num_heads: 12
+  max_length: 128
+  num_timesteps: 1000
+  dropout: 0.1
+  image_embedding_dim: 768
+  reward_num_layers: 6
+
+# Data configuration (same as default)
+data:
+  dataset_name: conceptual_captions
+  tokenizer_name: gpt2
+  max_length: 128
+  train_max_samples: 5000
+  val_max_samples: 500
+  test_max_samples: 500
+  cache_dir: null
+
+# Training configuration - ABLATION: Fixed weights instead of adaptive
+training:
+  # Base model pre-training
+  base_pretrain_epochs: 10
+  base_learning_rate: 0.0001
+  base_batch_size: 16
+
+  # Reward model training
+  reward_epochs: 5
+  reward_learning_rate: 0.0001
+  reward_batch_size: 16
+
+  # RLHF fine-tuning
+  rlhf_epochs: 8
+  rlhf_learning_rate: 0.00001
+  rlhf_batch_size: 8
+
+  # Optimization
+  weight_decay: 0.01
+  gradient_clip_norm: 1.0
+  warmup_steps: 100
+
+  # Early stopping
+  patience: 5
+
+  # Mixed precision training
+  use_amp: true
+
+  # ABLATION: Use only sparse rewards (no hierarchical shaping)
+  # Set CLIP weight to 0 to disable dense rewards
+  clip_weight: 0.0
+  preference_weight: 1.0
+  confidence_temperature: 0.1
+
+# Evaluation configuration (same as default)
+evaluation:
+  batch_size: 16
+  max_generation_length: 50
+  compute_all_metrics: true
+  num_samples: 100
+
+# Paths
+paths:
+  save_dir: models/ablation
+  checkpoint_dir: checkpoints/ablation
+  results_dir: results/ablation
+  log_dir: logs/ablation
+
+# Logging
+logging:
+  level: INFO
+  log_to_file: true
+  log_file: logs/ablation/training.log
+  mlflow_tracking: true
+  mlflow_experiment_name: ablation_sparse_only
+
+# Target metrics (same as default)
+target_metrics:
+  clip_score: 0.32
+  cider: 1.2
+  human_preference_win_rate: 0.68
+  specificity_score: 0.75

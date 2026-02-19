@@ -1,0 +1,68 @@
+# Smoke test configuration - very small to test execution quickly
+
+seed: 42
+device: cuda
+
+model:
+  vocab_size: 50257
+  hidden_dim: 256
+  num_layers: 2
+  num_heads: 4
+  max_length: 32
+  num_timesteps: 100
+  dropout: 0.1
+  image_embedding_dim: 256
+  reward_num_layers: 2
+
+data:
+  dataset_name: conceptual_captions
+  tokenizer_name: gpt2
+  max_length: 32
+  train_max_samples: 8
+  val_max_samples: 4
+  test_max_samples: 4
+  cache_dir: null
+
+training:
+  base_pretrain_epochs: 1
+  base_learning_rate: 0.001
+  base_batch_size: 2
+  reward_epochs: 1
+  reward_learning_rate: 0.001
+  reward_batch_size: 2
+  rlhf_epochs: 1
+  rlhf_learning_rate: 0.0001
+  rlhf_batch_size: 2
+  weight_decay: 0.01
+  gradient_clip_norm: 1.0
+  warmup_steps: 10
+  patience: 5
+  use_amp: false
+  clip_weight: 0.7
+  preference_weight: 0.3
+  confidence_temperature: 0.1
+
+evaluation:
+  batch_size: 2
+  max_generation_length: 20
+  compute_all_metrics: false
+  num_samples: 4
+
+paths:
+  save_dir: test_models
+  checkpoint_dir: test_checkpoints
+  results_dir: test_results
+  log_dir: test_logs
+
+logging:
+  level: INFO
+  log_to_file: false
+  log_file: test_logs/training.log
+  mlflow_tracking: false
+  mlflow_experiment_name: smoke_test
+
+target_metrics:
+  clip_score: 0.30
+  cider: 1.0
+  human_preference_win_rate: 0.60
+  specificity_score: 0.70
