@@ -1,0 +1,42 @@
+{
+  "project": "Hierarchical Diffusion RLHF Caption Refinement",
+  "dataset": "Google Conceptual Captions (5,000 train / 500 val)",
+  "model": {
+    "total_parameters": 247174229,
+    "base_model": "GPT-2 based diffusion caption model",
+    "reward_model": "Transformer-based preference predictor",
+    "mixed_precision": true
+  },
+  "stage1_base_pretraining": {
+    "epochs": 10,
+    "learning_rate": 0.0001,
+    "batch_size": 16,
+    "final_train_loss": 0.0091,
+    "final_val_loss": 0.3743,
+    "best_val_loss": 0.3743,
+    "best_val_loss_epoch": 10
+  },
+  "stage2_reward_model": {
+    "epochs": 5,
+    "learning_rate": 0.0001,
+    "batch_size": 16,
+    "final_train_loss": 0.0,
+    "final_train_accuracy": 1.0,
+    "final_val_loss": 0.0,
+    "final_val_accuracy": 1.0
+  },
+  "stage3_rlhf_finetuning": {
+    "epochs_completed": 6,
+    "max_epochs": 8,
+    "learning_rate": 1e-05,
+    "batch_size": 8,
+    "clip_weight": 0.7,
+    "preference_weight": 0.3,
+    "best_val_reward": 0.4835,
+    "best_val_reward_epoch": 1,
+    "final_train_loss": -7.041,
+    "final_val_loss": 4.4289,
+    "final_val_reward": 0.0949
+  },
+  "best_overall_val_loss": 0.3656
+}
